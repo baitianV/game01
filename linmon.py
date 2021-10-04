@@ -5,6 +5,8 @@ Created on Sun Oct  3 02:36:40 2021
 @author: Admin
 """
 from common import db,db_fetchone,db_fetchall
+from game_core import command
+
 class skill(object):
     def __init__(self,id):
         sql="""
@@ -26,7 +28,7 @@ class skill(object):
         self.rest_time=data['REST_TIME']
         self.run_effect=data['EFFECT']
         self.point=data['POINT']
-
+        
 
 class linmon(object):
     
@@ -64,6 +66,9 @@ class linmon(object):
         """.format(id)    
         data=db_fetchone(sql)
         return data
+    
+    # def get_command(self,skill):
+    #     cm=command(self.)
     
     def get_skill_list(self):
         sql="""

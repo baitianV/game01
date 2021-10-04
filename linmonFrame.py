@@ -81,6 +81,9 @@ class linmonFrame(LabelFrame):
         c_spr.set(self.gb.properties['spr'])
         Label(self,text='敏捷：').grid(row=6, column=3)
         Label(self,textvariable=c_spr).grid(row=6, column=4)
+        
+        #第八层
+        skillFrame(self,self.gb.skill_list).grid(row=7, column=0)
     
 class skillButton(Button):
     def __init__(self,parent,skill):
@@ -88,15 +91,23 @@ class skillButton(Button):
         self.skill=skill
         self.setUI()
         
-    def setUI():
-        super().config(text=self.skill.name,width = 8)
+    def setUI(self):
+        if self.skill.method=='主动':
+            super().config(text=self.skill.name,width = 8)
+        elif self.skill.method=='被动':
+            super().config(text=self.skill.name,width = 8,state=DISABLED)
            
 class skillFrame(LabelFrame):
     def __init__(self,parent,skill_list):
         super().__init__(parent)
-        self.skill=skill
-        self.gb.show()
+        self.skill_list=skill_list
+        self.num=0
         self.setUI()
+        
+    def setUI(self):
+        for item in self.skill_list:
+            skillButton(self, item).grid(row=self.num,column=0,columnspan=2)
+            self.num+=1
         
 
 if __name__=='__main__':
@@ -107,4 +118,3 @@ if __name__=='__main__':
     panel=linmonFrame(root,gb)
     panel.grid(row=0, column=0,rowspan=5,columnspan=7)
     root.mainloop()
-    db.close()

@@ -12,15 +12,20 @@ from linmon import linmon
 from linmonFrame import linmonFrame
 from common import db
 
+def func(a):
+    b=a
+    b.type='2'
 
-sql="""
-    SELECT TYPE,NATURE,C_MAX_HP,C_MAX_MP,C_HP,
-    C_MP,C_ATK,C_DEF,C_INT,C_RES,C_SPD,C_SPR 
-    FROM V_C_LINMON
-    WHERE ID={}
-""".format(1)
+def fund(a):
+    b=a
+    b=3
 
-cursor = db.cursor(DictCursor)   
-cursor.execute(sql)
-data=cursor.fetchall()
-print(data)
+a=linmon(1)
+a.show()
+func(a)
+a.show()
+
+
+b=1
+fund(b)
+print(b)
