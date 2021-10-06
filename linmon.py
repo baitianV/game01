@@ -5,6 +5,12 @@ Created on Sun Oct  3 02:36:40 2021
 @author: Admin
 """
 from common import db,db_fetchone,db_fetchall
+from skill import skill_all
+
+class damage(object):
+    def __init__(self,val,dm_type):
+        self.val=val
+        self.dm_type=dm_type
 
 class command(object):
     def __init__(self,sponsor,target,content,msg):
@@ -12,6 +18,11 @@ class command(object):
         self.target=target
         self.content=content
         self.msg=msg
+        
+    def read(self):
+        args=self.content.split('#')
+        return args
+        
 
 class skill(object):
     def __init__(self,owner,id):
@@ -22,6 +33,7 @@ class skill(object):
             WHERE ID={}
         """.format(id)
         data=db_fetchone(sql)
+        self.release=skill_all[id]
         self.owner=owner
         self.id=id
         self.name=data['NAME']
@@ -35,10 +47,9 @@ class skill(object):
         self.rest_time=data['REST_TIME']
         self.effect=data['EFFECT']
         self.point=data['POINT']
-        
-        
+                
     def get_command(self):
-        cm=command(self.owner.id,self.owner.enemy_id,self.effect,self.name)
+        cm=command(self.owner.id,self.owner.enemy_id,self.release,self.name)
         return cm
     
     def add_skill_command(self):
@@ -88,6 +99,7 @@ class linmon(object):
             SELECT LINMON_ID,SKILL_ID,STATUS_ID
             FROM C_LINMON_SKILL
             WHERE LINMON_ID={}
+            ORDER BY SKILL_ID
         """.format(self.id)    
         data=db_fetchall(sql)
         print(data)
@@ -108,9 +120,28 @@ class linmon(object):
             tmp=''+item+':'+str(self.properties[item])+' '
             print(tmp,end='')
         print()
+        
+    def base_attack(self,base,coe,dm_type):
+        if dm_type=='ad':          
+            val=int(base+self.properties['atk']*float(coe))
+        elif dm_type=='ap':
+            val=int(base+self.properties['int']*float(coe))
+        return damage(val, dm_type)
+    
+    def base_suffer(self,damage):
+        self.properties['hp']=self.properties['hp']-damage.val
+        
+    def base_defense(self,damage):
+        if damage.dm_type=='ad':
+            damage.val=damage.val-self.properties['def']
+        elif damage.val=='ap':
+            damage.val=damage.val-self.properties['res']
+        self.base_suffer(damage)
          
 if __name__=='__main__':
     ln=linmon(1)
     sk=ln.skill_list[0].owner.type
     print(sk)
+    
+    print(ln.ad_attack(0.2, 3.8))
         

@@ -20,6 +20,20 @@ class linmonFrame(LabelFrame):
     def setGB(self,id):
         return linmon(id)
 
+    def update(self,id):
+        type_name.set(self.gb.type)
+        nature.set(self.gb.nature)
+        hp.set(self.gb.properties['hp'])
+        max_hp.set(self.gb.properties['max_hp'])
+        mp.set(self.gb.properties['mp'])
+        max_mp.set(self.gb.properties['max_mp'])
+        c_atk.set(self.gb.properties['atk'])
+        c_def.set(self.gb.properties['def'])
+        c_int.set(self.gb.properties['int'])
+        c_ref.set(self.gb.properties['def'])
+        c_spd.set(self.gb.properties['spd'])
+        c_spr.set(self.gb.properties['spr'])
+
     def setUI(self):
         #第一层
         type_name=StringVar()
@@ -108,6 +122,7 @@ class skillFrame(LabelFrame):
         for item in self.skill_list:
             skillButton(self, item).grid(row=self.num,column=0,columnspan=2)
             self.num+=1
+                   
         
 
 if __name__=='__main__':

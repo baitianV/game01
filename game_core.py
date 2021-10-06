@@ -6,36 +6,28 @@ Created on Tue Oct  5 02:18:28 2021
 """
 import pymysql
 from tkinter import *
-from linmon import linmon,skill
+from linmon import linmon,skill,command,damage
 from common import db_fetchone
 from linmonFrame import linmonFrame
 from threading import Thread
 import time
 import queue
 
-class command(object):
-    def __init__(self,sponsor,target,content,msg):
-        self.sponsor=sponsor
-        self.target=target
-        self.content=content
-        self.msg
-
-#class content_read(object):
 
 class game_core(Thread):
     
-    def __init__(self,gb1,gb2):
+    def __init__(self,ui,gb1,gb2):
         super().__init__()
         self.command_queue=queue.Queue()
-        
+        self.ui=ui
         gb1.sign='gb1'
         gb2.sign='gb2'
         gb1.set_VSdata(self.command_queue,gb2.id)
         gb2.set_VSdata(self.command_queue,gb1.id)
         
         self.gb_all={
-            'gb1':gb1,
-            'gb2':gb2
+            gb1.id:gb1,
+            gb2.id:gb2
             }
         self.core_time=0
         self.quit_flag=False
@@ -49,8 +41,18 @@ class game_core(Thread):
                 pass
             else:
                 print(command.msg)
+                self.command_read(command)
+                self.ui.update()
             self.core_time+=1
             
+    def command_read(self,command):
+        sponsor=self.gb_all[command.sponsor]
+        target=self.gb_all[command.target]
+        command.content(sponsor,target)
+        sponsor.show()
+        target.show()
+            
+           
     def close(self):
         self.quit_flag=True
                 
