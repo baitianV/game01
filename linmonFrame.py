@@ -93,9 +93,9 @@ class skillButton(Button):
         
     def setUI(self):
         if self.skill.method=='主动':
-            super().config(text=self.skill.name,width = 8)
+            super().config(text=self.skill.name,width = 8,command=self.skill.add_skill_command)
         elif self.skill.method=='被动':
-            super().config(text=self.skill.name,width = 8,state=DISABLED)
+            super().config(text=self.skill.name,width = 8,command=self.skill.add_skill_command,state=DISABLED)
            
 class skillFrame(LabelFrame):
     def __init__(self,parent,skill_list):

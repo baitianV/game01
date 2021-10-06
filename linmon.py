@@ -5,10 +5,16 @@ Created on Sun Oct  3 02:36:40 2021
 @author: Admin
 """
 from common import db,db_fetchone,db_fetchall
-from game_core import command
+
+class command(object):
+    def __init__(self,sponsor,target,content,msg):
+        self.sponsor=sponsor
+        self.target=target
+        self.content=content
+        self.msg=msg
 
 class skill(object):
-    def __init__(self,id):
+    def __init__(self,owner,id):
         sql="""
             SELECT ID,NAME,TYPE,METHOD,COST,DESCRIPTION,COLD,SPELL_TIME,
             RUN_TIME,REST_TIME,EFFECT,POINT
@@ -16,6 +22,7 @@ class skill(object):
             WHERE ID={}
         """.format(id)
         data=db_fetchone(sql)
+        self.owner=owner
         self.id=id
         self.name=data['NAME']
         self.type=data['TYPE']
@@ -26,10 +33,18 @@ class skill(object):
         self.spell_time=data['SPELL_TIME']
         self.run_time=data['RUN_TIME']
         self.rest_time=data['REST_TIME']
-        self.run_effect=data['EFFECT']
+        self.effect=data['EFFECT']
         self.point=data['POINT']
         
-
+        
+    def get_command(self):
+        cm=command(self.owner.id,self.owner.enemy_id,self.effect,self.name)
+        return cm
+    
+    def add_skill_command(self):
+        cm=self.get_command()
+        self.owner.command_queue.put(cm)
+    
 class linmon(object):
     
     def __init__(self,id):
@@ -56,6 +71,7 @@ class linmon(object):
             'spr':data['C_SPR']
         }
         self.skill_list=self.get_skill_list()
+        self.sign=''
     
     def init_data(self):
         sql="""
@@ -67,9 +83,6 @@ class linmon(object):
         data=db_fetchone(sql)
         return data
     
-    # def get_command(self,skill):
-    #     cm=command(self.)
-    
     def get_skill_list(self):
         sql="""
             SELECT LINMON_ID,SKILL_ID,STATUS_ID
@@ -80,10 +93,14 @@ class linmon(object):
         print(data)
         skill_list=[]
         for item in data:
-            sk=skill(item['SKILL_ID'])
+            sk=skill(self,item['SKILL_ID'])
             skill_list.append(sk)
         return skill_list
     
+    def set_VSdata(self,command_queue,enemy_id):
+        self.command_queue=command_queue
+        self.enemy_id=enemy_id
+        
     def show(self):
         print('类型：',self.type)
         print('属性：',self.nature)
@@ -91,8 +108,9 @@ class linmon(object):
             tmp=''+item+':'+str(self.properties[item])+' '
             print(tmp,end='')
         print()
-        
+         
 if __name__=='__main__':
     ln=linmon(1)
-        
+    sk=ln.skill_list[0].owner.type
+    print(sk)
         
